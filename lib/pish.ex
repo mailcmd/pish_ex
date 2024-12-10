@@ -311,7 +311,7 @@ defmodule Pish do
               id = fnnv([to_string(id), accum |> Enum.count() |> to_string]) # id is :id or next sequence number
               { next_or_abort, accum_item } =
                   cond do
-                    is_regex(error_regex) ->
+                    regex?(error_regex) ->
                       case { Regex.run(error_regex, total_data), error_abort } do
                         { match , true} when match != nil ->
                           {:abort, {:error, List.last(match)} }
@@ -320,7 +320,7 @@ defmodule Pish do
                           {:next, {:error, List.last(match)} }
                       end
 
-                    is_regex(match_regex) ->
+                    regex?(match_regex) ->
                       result = match_regex |> Regex.scan(total_data) |> Enum.map( fn ([_|t]) -> t end )
                       case result  do
                         [] ->
@@ -397,10 +397,10 @@ defmodule Pish do
             end
 
         cond do
-          (is_regex(prompt) and String.match?(newdata, prompt)) ->
+          (regex?(prompt) and String.match?(newdata, prompt)) ->
             data <> newdata
 
-          (not is_regex(prompt) and String.contains?(newdata, prompt)) ->
+          (not regex?(prompt) and String.contains?(newdata, prompt)) ->
             data <> newdata
 
           config.continue.prompt != nil and String.match?(newdata, config.continue.prompt) ->

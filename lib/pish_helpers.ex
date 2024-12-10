@@ -1,5 +1,5 @@
 defmodule Pish.Helpers do
-  def is_regex(value), do: Kernel.is_struct(value, Regex)
+  def regex?(value), do: Kernel.is_struct(value, Regex)
 
   # First non null value
   def fnnv([]), do: nil
