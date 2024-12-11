@@ -48,12 +48,8 @@ defmodule Pish do
           # Before send command wait for the "prompt". If nil or not set does not wait.
       until_prompt: <string>
           # After send command wait for "until_prompt" to complete data collect. If not set wait for config.common.prompt-
-      scope: (:global | :line)
-          # EXP_GLOBAL aplicará "regexp" a TODA la respuesta del comando. La respuesta será un arreglo monodimensional.
-          # EXP_LINE aplicará "regexp" a CADA LINEA de la respuesta del comando. La respuesta será un arreglo
-          # bidimensional ([fila][columna]).
       match_regex: <string>
-          # Expresion regular que evalúa la respuesta de acuerdo a :scope. Las expresiones entre paréntesis
+          # Expresion regular que evalúa la respuesta. Las expresiones entre paréntesis
           # permiten extraer trozos de la respuesta. El orden de los paréntesis determina el índice en el arreglo
           # a menos que se defina :map para mapear cada uno de esos índice a un nombre.
       map: <string>
@@ -92,10 +88,9 @@ defmodule Pish do
   ```
   """
 
-  @echo_output true
-  @echo_input true
-
   @default_config %{
+    echo_output: true,
+    echo_input: false,
     timeout: 5000,
     close_onerror: true,
     user: nil,
@@ -156,6 +151,10 @@ defmodule Pish do
 
   def open(shell_command, config \\ @default_config) do
     config = Map.merge(@default_config, config)
+
+    # I need to save "config.echo_input" because "config" is not available when this value is required
+    Process.put(:echo_input, config.echo_input)
+
     parent_pid = self()
     output_receiver_pid = spawn_link(fn -> receive_data(parent_pid, config) end)
     process = Porcelain.spawn_shell(shell_command, [ in: :receive, out: {:send, output_receiver_pid}, err: :out ])
@@ -458,19 +457,19 @@ defmodule Pish do
   end
   def send_input(process, input, newline \\ true) do
     inp = input <> (newline && "\n" || "")
-    if @echo_input, do: IO.write(inp)
+    if Process.get(:echo_input, false), do: IO.write(inp)
     Proc.send_input(process, inp)
   end
 
-  defp receive_data(pid, config) do
+  defp receive_data(pid, %{echo_output: echo_output} = config) do
     receive do
       {_, :data, :out, data} ->
-        if @echo_output, do: IO.write(data)
+        if echo_output, do: IO.write(data)
         send(pid, {:data, data})
         receive_data(pid, config)
 
       {_, :result, %Result{status: status}} ->
-        if @echo_output, do: IO.puts("=== END OF SHELL ===")
+        if echo_output, do: IO.puts("=== END OF SHELL ===")
         send(pid, {:exit, status})
     end
   end
