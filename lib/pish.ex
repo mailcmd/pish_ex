@@ -317,6 +317,10 @@ defmodule Pish do
 
                         { match , false} when match != nil ->
                           {:next, {:error, List.last(match)} }
+
+                        _ ->
+                          {:next, accum}
+
                       end
 
                     regex?(match_regex) ->
