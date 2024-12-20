@@ -308,7 +308,7 @@ defmodule Pish do
             # total data recollected, this is the moment of process it
             total_data ->
               id = fnnv([to_string(id), accum |> Enum.count() |> to_string]) # id is :id or next sequence number
-              { next_or_abort, accum_item } =
+              { next_or_abort, accum_item } = (
                   has_error? =
                       if regex?(error_regex) do
                         case { Regex.run(error_regex, total_data), error_abort } do
@@ -346,6 +346,7 @@ defmodule Pish do
                   else
                     has_error?
                   end
+              )
 
               cond do
                 accum[id] == nil ->
