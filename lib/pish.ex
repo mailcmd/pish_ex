@@ -309,36 +309,42 @@ defmodule Pish do
             total_data ->
               id = fnnv([to_string(id), accum |> Enum.count() |> to_string]) # id is :id or next sequence number
               { next_or_abort, accum_item } =
-                  cond do
-                    regex?(error_regex) ->
-                      case { Regex.run(error_regex, total_data), error_abort } do
-                        { match , true} when match != nil ->
-                          {:abort, {:error, List.last(match)} }
+                  has_error? =
+                      if regex?(error_regex) do
+                        case { Regex.run(error_regex, total_data), error_abort } do
+                          { match , true} when match != nil ->
+                            {:abort, {:error, List.last(match)} }
 
-                        { match , false} when match != nil ->
-                          {:next, {:error, List.last(match)} }
+                          { match , false} when match != nil ->
+                            {:next, {:error, List.last(match)} }
 
-                        _ ->
-                          {:next, accum}
-
+                          _ ->
+                            :no_error
+                        end
+                      else
+                        :no_error
                       end
 
-                    regex?(match_regex) ->
-                      result = match_regex |> Regex.scan(total_data) |> Enum.map( fn ([_|t]) -> t end )
-                      case result  do
-                        [] ->
-                          nomatch_abort && {:abort, %{} } || {:next, %{} }
+                  if has_error? == :no_error do
+                      if regex?(match_regex) do
+                        result = match_regex |> Regex.scan(total_data) |> Enum.map( fn ([_|t]) -> t end )
+                        case result  do
+                          [] ->
+                            nomatch_abort && {:abort, %{} } || {:next, %{} }
 
-                        [ result ] ->
-                          field_keys = fnnv([map, 0..(length(result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
-                          {:next, Enum.zip(field_keys, result) |> Enum.into(%{}) }
+                          [ result ] ->
+                            field_keys = fnnv([map, 0..(length(result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
+                            {:next, Enum.zip(field_keys, result) |> Enum.into(%{}) }
 
-                        [first_result | _] = results ->
-                          field_keys = fnnv([map, 0..(length(first_result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
-                          {:next, results |> Enum.map( fn res -> Enum.zip(field_keys, res)  |> Enum.into(%{}) end) }
+                          [first_result | _] = results ->
+                            field_keys = fnnv([map, 0..(length(first_result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
+                            {:next, results |> Enum.map( fn res -> Enum.zip(field_keys, res)  |> Enum.into(%{}) end) }
+                        end
+                      else
+                        {:next, total_data }
                       end
-
-                    true -> {:next, total_data }
+                  else
+                    has_error?
                   end
 
               cond do
