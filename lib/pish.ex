@@ -312,14 +312,15 @@ defmodule Pish do
                   has_error? =
                       if regex?(error_regex) do
                         case { Regex.run(error_regex, total_data), error_abort } do
-                          { match , true} when match != nil ->
+                          {nil, _} ->
+                            :no_error
+
+                          { match , true} ->
+                            IO.inspect match
                             {:abort, {:error, List.last(match)} }
 
-                          { match , false} when match != nil ->
+                          { match , false} ->
                             {:next, {:error, List.last(match)} }
-
-                          _ ->
-                            :no_error
                         end
                       else
                         :no_error
