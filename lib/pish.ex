@@ -316,10 +316,14 @@ defmodule Pish do
                             :no_error
 
                           { match , true} ->
-                            {:abort, {:error, List.last(match)} }
+                            error_message = List.last(match)
+                            Process.put(:last_error, error_message)
+                            {:abort, {:error, error_message} }
 
                           { match , false} ->
-                            {:next, {:error, List.last(match)} }
+                            error_message = List.last(match)
+                            Process.put(:last_error, error_message)
+                            {:next, {:error, error_message} }
                         end
                       else
                         :no_error
@@ -378,6 +382,8 @@ defmodule Pish do
   end
 
   def alive?({process, _}), do: Proc.alive?(process)
+
+  def last_error, do: Process.get(:last_error, "")
 
   def default_config, do: @default_config
 
