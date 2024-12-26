@@ -316,7 +316,6 @@ defmodule Pish do
                             :no_error
 
                           { match , true} ->
-                            IO.inspect match
                             {:abort, {:error, List.last(match)} }
 
                           { match , false} ->
