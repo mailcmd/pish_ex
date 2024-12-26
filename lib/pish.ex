@@ -207,6 +207,7 @@ defmodule Pish do
       end
 
     else
+      Process.put(:last_error, "Error opening shell!")
       {:error, "Error opening shell!"}
     end
 
