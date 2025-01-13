@@ -155,6 +155,7 @@ defmodule Pish do
     # I need to save "config.echo_input" because "config" is not available when this value is required
     Process.put(:echo_input, config.echo_input)
 
+    flush()
     parent_pid = self()
     output_receiver_pid = spawn_link(fn -> receive_data(parent_pid, config) end)
     process = Porcelain.spawn_shell(shell_command, [ in: :receive, out: {:send, output_receiver_pid}, err: :out ])
