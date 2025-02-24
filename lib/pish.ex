@@ -337,7 +337,7 @@ defmodule Pish do
                   if has_error? == :no_error do
                       if regex?(match_regex) do
                         result = match_regex |> Regex.scan(total_data) |> Enum.map( fn ([_|t]) -> t end )
-                        case result |> IO.inspect do
+                        case result do
                           [] ->
                             nomatch_abort && {:abort, %{} } || {:next, %{} }
 
@@ -356,12 +356,14 @@ defmodule Pish do
                     has_error?
                   end
               )
-
+              IO.inspect(accum[id], label: "XXXX: ")
               cond do
                 accum[id] == nil ->
                   {next_or_abort, Map.put(accum, id, accum_item) }
                 is_list(accum[id]) ->
                   {next_or_abort, Map.put(accum, id, accum[id] ++ [ accum_item ]) }
+                %{} ->
+                  {next_or_abort, Map.put(accum, id, [accum_item]) }
                 true ->
                   {next_or_abort, Map.put(accum, id, [accum[id], accum_item ]) }
               end
