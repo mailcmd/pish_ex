@@ -356,7 +356,6 @@ defmodule Pish do
                     has_error?
                   end
               )
-              IO.inspect(accum[id], label: "XXXX: ")
               cond do
                 accum[id] == nil ->
                   {next_or_abort, Map.put(accum, id, accum_item) }
