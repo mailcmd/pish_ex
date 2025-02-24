@@ -347,7 +347,7 @@ defmodule Pish do
 
                           [first_result | _] = results ->
                             field_keys = fnnv([map, 0..(length(first_result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
-                            {:next, results |> Enum.map( fn res -> Enum.zip(field_keys, res)  |> Enum.into(%{}) end) }
+                            {:next, results |> Enum.map( fn res -> Enum.zip(field_keys, res)  |> Enum.into(%{}) end) |> Enum.filter( &(not Enum.empty?(&1) )) }
                         end
                       else
                         {:next, total_data }
