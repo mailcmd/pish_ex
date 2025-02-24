@@ -337,7 +337,7 @@ defmodule Pish do
                   if has_error? == :no_error do
                       if regex?(match_regex) do
                         result = match_regex |> Regex.scan(total_data) |> Enum.map( fn ([_|t]) -> t end )
-                        case result  do
+                        case result |> IO.inspect do
                           [] ->
                             nomatch_abort && {:abort, %{} } || {:next, %{} }
 
@@ -347,7 +347,7 @@ defmodule Pish do
 
                           [first_result | _] = results ->
                             field_keys = fnnv([map, 0..(length(first_result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
-                            {:next, results |> Enum.map( fn res -> Enum.zip(field_keys, res)  |> Enum.into(%{}) end) |> Enum.filter( &(not Enum.empty?(&1) )) }
+                            {:next, results |> Enum.map( fn res -> Enum.zip(field_keys, res)  |> Enum.into(%{}) end) }
                         end
                       else
                         {:next, total_data }
