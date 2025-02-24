@@ -52,6 +52,9 @@ defmodule Pish do
           # Expresion regular que evalúa la respuesta. Las expresiones entre paréntesis
           # permiten extraer trozos de la respuesta. El orden de los paréntesis determina el índice en el arreglo
           # a menos que se defina :map para mapear cada uno de esos índice a un nombre.
+      nomatch_abort: <boolean>
+          # Si es "true" la secuencia de ejecución de comandos se aborta si no hubo matcheo.
+          # Si es "false" continua igual.
       map: <string>
           # Permite que la respuesta almacene los valores extraidos con :match_regex en índices alfanuméricos en vez
           # los índices númericos secuenciales.
