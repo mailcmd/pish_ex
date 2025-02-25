@@ -461,7 +461,13 @@ defmodule Pish do
   defp apply_replaces_wildcard(_, [], _), do: []
   defp apply_replaces_wildcard(cmd, [[rpl, ptr] | tail], accum) do
     [ left, right ] = String.split(ptr, ".*.")
-    replaces = get_in(accum, [left]) |> Enum.map( &([ rpl  ,&1[right]]) )
+    replaces =
+      case get_in(accum, [left]) do
+        list when is_list(list) ->
+          list |> Enum.map( &([ rpl, &1[right]]) )
+        _ ->
+          []
+      end
     apply_replaces_wildcard_h([], cmd, replaces) ++ apply_replaces_wildcard(cmd, tail, accum)
   end
   defp apply_replaces_wildcard_h(list, _, []), do: list
