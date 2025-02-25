@@ -286,7 +286,7 @@ defmodule Pish do
       map: map
   } = command, accum) do
 
-    IO.inspect({cmd, accum}, "CMD, ACCUM")
+    IO.inspect({cmd, accum}, label: "CMD, ACCUM")
     cmd = apply_replaces(cmd, accum)
     if is_list(cmd) do
       # if cmd is converted to a list of cmds, we call run expanding %Command for each cmd
