@@ -360,7 +360,7 @@ defmodule Pish do
               )
               cond do
                 accum[id] == nil and command.always_as_list ->
-                    {next_or_abort, Map.put(accum, id, [accum_item]) }
+                    {next_or_abort, Map.put(accum, id, List.flatten([accum_item])) }
                 accum[id] == nil ->
                   {next_or_abort, Map.put(accum, id, accum_item) }
                 is_list(accum[id]) ->
