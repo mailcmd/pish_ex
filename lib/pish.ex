@@ -286,7 +286,7 @@ defmodule Pish do
       map: map
   } = command, accum) do
 
-    IO.inspect({cmd, accum}, label: "CMD, ACCUM")
+    # IO.inspect({cmd, accum}, label: "CMD, ACCUM")
     cmd = apply_replaces(cmd, accum)
     if is_list(cmd) do
       # if cmd is converted to a list of cmds, we call run expanding %Command for each cmd
@@ -359,7 +359,11 @@ defmodule Pish do
               )
               cond do
                 accum[id] == nil ->
-                  {next_or_abort, Map.put(accum, id, accum_item) }
+                  if command[:as_list] do
+                    {next_or_abort, Map.put(accum, id, [accum_item]) }
+                  else
+                    {next_or_abort, Map.put(accum, id, accum_item) }
+                  end
                 is_list(accum[id]) ->
                   {next_or_abort, Map.put(accum, id, accum[id] ++ [ accum_item ]) }
                 true ->
