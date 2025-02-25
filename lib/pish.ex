@@ -364,7 +364,7 @@ defmodule Pish do
                 accum[id] == nil ->
                   {next_or_abort, Map.put(accum, id, accum_item) }
                 is_list(accum[id]) ->
-                  {next_or_abort, Map.put(accum, id, accum[id] ++ [ accum_item ]) }
+                  {next_or_abort, Map.put(accum, id, List.flatten(accum[id] ++ [ accum_item ])) }
                 true ->
                   {next_or_abort, Map.put(accum, id, [accum[id], accum_item ]) }
               end
