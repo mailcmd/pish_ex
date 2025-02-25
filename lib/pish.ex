@@ -468,7 +468,7 @@ defmodule Pish do
     replaces =
       case get_in(accum, [left]) do
         list when is_list(list) ->
-          list |> IO.inspect |> Enum.map( &([rpl, &1[right]]) )
+          list |> List.flatten() |> Enum.map( &([rpl, &1[right]]) )
         _ ->
           []
       end
