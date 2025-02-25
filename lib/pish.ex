@@ -286,6 +286,7 @@ defmodule Pish do
       map: map
   } = command, accum) do
 
+    IO.inspect({cmd, accum}, "CMD, ACCUM")
     cmd = apply_replaces(cmd, accum)
     if is_list(cmd) do
       # if cmd is converted to a list of cmds, we call run expanding %Command for each cmd
@@ -346,7 +347,6 @@ defmodule Pish do
                             {:next, Enum.zip(field_keys, result) |> Enum.into(%{}) }
 
                           [first_result | _] = results ->
-                            IO.inspect results
                             field_keys = fnnv([map, 0..(length(first_result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
                             {:next, results |> Enum.map( fn res -> Enum.zip(field_keys, res)  |> Enum.into(%{}) end) }
                         end
