@@ -142,6 +142,7 @@ defmodule Pish do
       :error_regex, #
       :cmd, #
       nowait_prompt: false, #
+      as_list: false,
       nomatch_abort: true, #
       error_abort: true #
     ]
