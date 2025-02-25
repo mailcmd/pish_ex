@@ -359,7 +359,7 @@ defmodule Pish do
                   end
               )
               cond do
-                accum[id] == nil and command[:always_as_list] ->
+                accum[id] == nil and command.always_as_list ->
                     {next_or_abort, Map.put(accum, id, [accum_item]) }
                 accum[id] == nil ->
                   {next_or_abort, Map.put(accum, id, accum_item) }
