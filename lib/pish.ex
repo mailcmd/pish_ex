@@ -142,7 +142,7 @@ defmodule Pish do
       :error_regex, #
       :cmd, #
       nowait_prompt: false, #
-      as_list: false,
+      always_as_list: false,
       nomatch_abort: true, #
       error_abort: true #
     ]
@@ -360,7 +360,7 @@ defmodule Pish do
               )
               cond do
                 accum[id] == nil ->
-                  if command[:as_list] do
+                  if command[:always_as_list] do
                     {next_or_abort, Map.put(accum, id, [accum_item]) }
                   else
                     {next_or_abort, Map.put(accum, id, accum_item) }
