@@ -234,8 +234,10 @@ defmodule Pish do
               end
 
             case run? do
-              {:eval_error, e} -> {:abort, {:eval_error, e}}
-              false -> {:next, accum}
+              {:eval_error, e} ->
+                {:abort, {:eval_error, e}}
+              false ->
+                {:next, accum}
               true ->
                 if (is_integer(delay)), do: :timer.sleep(delay)
                 send_command(conn, command, accum)
@@ -257,6 +259,10 @@ defmodule Pish do
         {:abort, accum} ->
           if close_onerror, do: close(conn)
           {:error, "Abort on command: #{inspect(command, pretty: true)}\nAccum: #{inspect(accum, pretty: true)}"}
+
+        {:nomatch_abort, accum} ->
+          if close_onerror, do: close(conn)
+          {:ok, accum}
 
         {:next, accum} ->
           run({process, config}, commands, accum)
@@ -341,7 +347,8 @@ defmodule Pish do
                         result = match_regex |> Regex.scan(total_data) |> Enum.map( fn ([_|t]) -> t end )
                         case result do
                           [] ->
-                            nomatch_abort && {:abort, %{} } || {:next, %{} }
+                            # nomatch_abort && {:abort, %{} } || {:next, %{} }
+                            nomatch_abort && {:nomatch_abort, %{} } || {:next, %{} }
 
                           [ result ] ->
                             field_keys = fnnv([map, 0..(length(result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
