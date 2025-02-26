@@ -348,7 +348,7 @@ defmodule Pish do
                         case result do
                           [] ->
                             # nomatch_abort && {:abort, %{} } || {:next, %{} }
-                            nomatch_abort && {:nomatch_abort, %{} } || {:next, %{} }
+                            nomatch_abort && {:nomatch_abort, [] } || {:next, %{} }
 
                           [ result ] ->
                             field_keys = fnnv([map, 0..(length(result)-1) |> Enum.into([])]) |> Enum.map(&to_string(&1))
