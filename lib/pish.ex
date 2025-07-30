@@ -403,6 +403,7 @@ defmodule Pish do
   end
 
   @type connection() :: {process :: %Porcelain.Process{}, config :: map()}
+  @type command() :: %Command{}
 
   import Pish.Helpers
 
@@ -491,7 +492,7 @@ defmodule Pish do
   The 3rd parameter is by default a empty map; there will be stored the result of each command
   execution.
   """
-  @spec run(conn :: connection(), commands :: list(%Command{}) | %Command{}, result :: map())
+  @spec run(conn :: connection(), commands :: list(command()) | command(), result :: map())
     :: {:ok, result :: map()} | {:error, msg :: String.t()}
   def run(conn, commands, accum \\ %{})
   def run(_, [], accum), do: {:ok, accum}
