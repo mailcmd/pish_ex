@@ -24,33 +24,33 @@ The configuration is a map with this format:
   timeout: 5000,
 
   # if any error happens, the process is closed and return with the data obtained until that moment.
-  #    You must take in account that an error can be by evaluate a command as erronous (see
-  #    the parameter `error_regex` in %Command{} struct) or by an unexpected problem (timeout,
-  #    process freezing, etc).
-  #    Default is true.
+  # You must take in account that an error can be by evaluate a command as erronous (see
+  # the parameter `error_regex` in %Command{} struct) or by an unexpected problem (timeout,
+  # process freezing, etc).
+  # Default is true.
   close_onerror: true,
 
   # Useful when the process is a telnet/ssh session. Pish will wait for the string/regex in `prompt`
-  #   and then will send the `username` parameter. If `user` is not defined, the sending of the
-  #   username will be skipped. Default is nil (undefined).
+  # and then will send the `username` parameter. If `user` is not defined, the sending of the
+  # username will be skipped. Default is nil (undefined).
   user: %{
     prompt: "ogin:",  # (string | regex)
     username: <string>
   },
 
   # Same as `user`, useful when the process is a telnet/ssh session. Pish will wait for string/regex 
-  #   in `prompt` and then will send `password` parameter. If `pass` is not defined, the sending
-  #   of the password will be skipped. Default is nil (undefined).
+  # in `prompt` and then will send `password` parameter. If `pass` is not defined, the sending
+  # of the password will be skipped. Default is nil (undefined).
   pass: %{
     prompt: "assword:", # (string | regex)
     password: <string>
   },
 
   # Usually this parameter is complementary to `user` and `pass` parameters. Some devices has
-  #   an admin mode that you can access with a special command (in cisco routers it is usually
-  #   `enable`). With the `superuser` parameter Pish can wait for a specific prompt and send a
-  #   command. Optionally Pish can wait for another prompt (`pass_prompt`) and send a password
-  #   if it is needed. Default is nil (undefined).
+  # an admin mode that you can access with a special command (in cisco routers it is usually
+  #nable`). With the `superuser` parameter Pish can wait for a specific prompt and send a
+  # command. Optionally Pish can wait for another prompt (`pass_prompt`) and send a password
+  # if it is needed. Default is nil (undefined).
   superuser: %{
     prompt: ">", # (string | regex)
     cmd: "enable",
@@ -59,28 +59,28 @@ The configuration is a map with this format:
   },
 
   # This parameter define the default prompt for the complete interaction after the login process. 
-  #   If the command has not defined its own prompt, this common prompt will be used. 
-  #   Default is "#".
+  # If the command has not defined its own prompt, this common prompt will be used. 
+  # Default is "#".
   common: %{
     prompt: "#", # (string | regex)
   },
 
   # Some interactive commands or telnet/ssh session has a pager. With the `continue` parameter
-  #   you could lead with it. The `prompt` parameter will allow to identify the moment when the
-  #   pager ask for a key press; the `key` parameter will allow simulate the key press for continue.
+  # you could lead with it. The `prompt` parameter will allow to identify the moment when the
+  # pager ask for a key press; the `key` parameter will allow simulate the key press for continue.
   continue: %{
     prompt: ~r/(Press|More)/, # (string | regex),
     key: " " # spacebar
   },
 
   # The Pish parser need split the data received in lines. With this parameter you can define the
-  #    character or a regex to identify the end of the lines. The default is "\n".
+  # character or a regex to identify the end of the lines. The default is "\n".
   line: %{
     prompt: "\n", # (string | regex),
   },
 
   # You can use this parameter when the interactive shell need a command to finalize and close
-  #    the process. Deault is "exit".
+  # the process. Deault is "exit".
   cmd_exit: "exit"
 }
 ```
@@ -94,68 +94,68 @@ The `commands` parameter can be just a %Command{} struct or a list of %Command{}
   delay: <integer>
 
   # It is possible that you need wait for a specific string/regex before send the command. If you set
-  #    `prompt`, Pish wait for it and then will send the command. If `prompt` is nil or not defined
-  #    Pish does not wait and directly will send the command.
+  #rompt`, Pish wait for it and then will send the command. If `prompt` is nil or not defined
+  # Pish does not wait and directly will send the command.
   prompt: <string | regex>,
 
   # If you set `until_prompt`, Pish will wait for the string|regex after send the command to complete
-  #    the data collect. If is nil or not defined, Pish will wait for `config.common.prompt`
+  # the data collect. If is nil or not defined, Pish will wait for `config.common.prompt`
   until_prompt: <string | regex>,
 
   # If you need send a command and are not worry about the response, you can set `nowait_prompt`
-  #    in `true` for Pish send the command with no capture datas and pass to the next command.
+  # in `true` for Pish send the command with no capture datas and pass to the next command.
   nowait_prompt: <boolean>,
 
   # If set `true`, regardless of whether there is one match or several, Pish will return a list.
-  #    See `Anex A` below for more details.
+  # See `Anex A` below for more details.
   always_as_list: <boolean>
 
   # This is the regex that evaluates the response. Expressions closed by parentheses allow you
-  #    to extract pieces of the response. The order of the parentheses determines the index in
-  #    the list unless :map is defined (see below) to map each of those indexes to a key.
-  #    For details about pieces extraction se `Anex A` below.
-  #    If this parameters is not defined, the command is sent and do not wait for any specific
-  #    prompt, just continue with the next command.
+  # to extract pieces of the response. The order of the parentheses determines the index in
+  # the list unless :map is defined (see below) to map each of those indexes to a key.
+  # For details about pieces extraction se `Anex A` below.
+  # If this parameters is not defined, the command is sent and do not wait for any specific
+  # prompt, just continue with the next command.
   match_regex: <regex>,
 
   # If this parameter is defined as `true` and the output of the command do not match `match_regex`
-  #    the sequence is aborted and Pish return the data obtained until that moment. If it is `false`,
-  #    Pish will continue even when the response does not match with `match_regex`.
+  # the sequence is aborted and Pish return the data obtained until that moment. If it is `false`,
+  # Pish will continue even when the response does not match with `match_regex`.
   nomatch_abort: <boolean>,
 
   # Allows values extracted with `match_regex` from the response to be stored as key/value pairs
-  #    instead of sequential numeric indexes. If not defined Pish will use ["0", "1", ..., "n"].
+  # instead of sequential numeric indexes. If not defined Pish will use ["0", "1", ..., "n"].
   map: [ key1, key2, ..., keyn ],
 
   # Allows the result of this command to be stored in a key determined by `id` instead
-  #    of the numerical index that would correspond to it based on the numerical index of the command
-  #    within the commands list.
+  # of the numerical index that would correspond to it based on the numerical index of the command
+  # within the commands list.
   id: <any>
 
   # This parameter allows to decide whether a command will be executed depending on a logical
-  #    expression with Elixir syntax. The <string> is evaluated using `Code.eval_string` function;
-  #    if the eval returns ‘false’, this command will be skipped.
-  #    Take in account that <string> allows macro substitutions such as those explained in `cmd`
-  #    parameter (see below).
+  # expression with Elixir syntax. The <string> is evaluated using `Code.eval_string` function;
+  # if the eval returns ‘false’, this command will be skipped.
+  # Take in account that <string> allows macro substitutions such as those explained in `cmd`
+  # parameter (see below).
   run_if: <string>
 
   # This regex allows to determine whether the return of the command is an error or not. The entire
-  #    matching string will be returned in `results[index or :id][“error_message”]`, and
-  #   `results[index or :id][“error”]` will contain the value -1.
+  # matching string will be returned in `results[index or :id][“error_message”]`, and
+  #esults[index or :id][“error”]` will contain the value -1.
   error_regex: <regex>
 
   # You now know that if `error_regexp` has a match and `config.close_onerror` is `true` the sequence
-  #   is aborted and Pish return the data obtained until that moment. But if you need create an
-  #   exception to this behavior for one command, you can set `error_abort` in false.
-  #   In the same sense but inversed, you can set the default behavior like permisive
-  #   (config.close_onerror set in `false`) and create an exception to this behavior setting
-  #   `error_abort` as `true`. By default this parameter is `true`.
+  # is aborted and Pish return the data obtained until that moment. But if you need create an
+  # exception to this behavior for one command, you can set `error_abort` in false.
+  # In the same sense but inversed, you can set the default behavior like permisive
+  #onfig.close_onerror set in `false`) and create an exception to this behavior setting
+  #rror_abort` as `true`. By default this parameter is `true`.
   error_abort: <boolean>
 
   # This is a string with the command to send.
-  #   You can do substitutions in the command using macros of the form {a.b.c}; this reference
-  #   will be replaced by results[a][b][c]. For more details you can see an example below in the
-  #   `Anex B`.
+  # You can do substitutions in the command using macros of the form {a.b.c}; this reference
+  # will be replaced by results[a][b][c]. For more details you can see an example below in the
+  #nex B`.
   cmd: <string>
 }
 
