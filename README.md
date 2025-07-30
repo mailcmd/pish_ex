@@ -178,15 +178,15 @@ Suppose that you have a commands parameter like this:
   %Command{...}   # command index 3
 ]
 ```
-When a sequence of commands finish, an Elixir map is returned. In this case it will be something
-like this:
+When the running of the sequence of commands finish, an Elixir map is returned. In this case it will 
+be something like this:
 
 ```elixir
 %{
-  0 => <map resulting of command index 0>,
-  1 => <map resulting of command index 1>,
+  "0" => <map resulting of command index 0>,
+  "1" => <map resulting of command index 1>,
   "recipe" => <map resulting of command index 2 with id: "recipe">,
-  3 => <map resulting of command index 1>,
+  "3" => <map resulting of command index 1>,
 }
 ```
 
@@ -333,6 +333,10 @@ true
 In this case we use `{systemd.*.pid}` in the second command to expand every row obtained with the
 first command (more than one process) and get the status of every one of them.
 
+## TODO
+
+A lot of testing and trials in various scenarios. Sorry, I don't have enough time, I'm happy as 
+long as it works well for what I need it for right now.
 
 ## Installation
 
@@ -342,7 +346,7 @@ by adding `pis_ex` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:pish_ex, "~> 0.1.0"}
+    {:pish_ex, "~> 0.2.0"}
   ]
 end
 ```
