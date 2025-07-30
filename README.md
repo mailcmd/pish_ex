@@ -4,41 +4,42 @@ human input/output interaction. It is designed and specially useful to automatiz
 interactive sessions with routers, switch, CMTSs, OLTs and other devices.
 
 ## How to use 
-Pish has 2 main config parameters: the configuration itself that say to Pish how to behave and the
-commands that say to Pish what to send to the process, what to expect as a result and what to do
+Pish has 2 main config parameters: the **configuration** itself, that say to Pish how to behave and the
+**commands** that say to Pish what to send to the process, what to expect as a result and what to do
 with this result. The commands can be many and will be sent in sequence. Each command can use info
 obtained in the previous commands. Although the normal flow is in sequence, it is possible to has
 some control by skipping commands if specific conditions are met (see `run_if` parameter).
-For details see `Anex A` and `Anex B` below.
+For details see **Anex A** and **Anex B** below.
 
 ### Configuration parameter
 The configuration is a map with this format:
 
 ```elixir
 %{
+  # Just for debug
   echo_output: false,
   echo_input: false,
 
   # How long to wait for a response. Default is 5 secs.
   timeout: 5000,
 
-  # if any error happens the process is closed and return with the data obtained until that moment.
+  # if any error happens, the process is closed and return with the data obtained until that moment.
   #    You must take in account that an error can be by evaluate a command as erronous (see
   #    the parameter `error_regex` in %Command{} struct) or by an unexpected problem (timeout,
   #    process freezing, etc).
   #    Default is true.
   close_onerror: true,
 
-  # Useful when the process is a telnet/ssh session. Pish will wait for `prompt` string/regex
-  #   and then will send `username` parameteres. If `user` is not defined, the sending of the
+  # Useful when the process is a telnet/ssh session. Pish will wait for the string/regex in `prompt`
+  #   and then will send the `username` parameter. If `user` is not defined, the sending of the
   #   username will be skipped. Default is nil (undefined).
   user: %{
     prompt: "ogin:",  # (string | regex)
     username: <string>
   },
 
-  # Same as `user`, useful when the process is a telnet/ssh session. Pish will wait for `prompt`
-  #   string/regex and then will send `password` parameteres. If `pass` is not defined, the sending
+  # Same as `user`, useful when the process is a telnet/ssh session. Pish will wait for string/regex 
+  #   in `prompt` and then will send `password` parameter. If `pass` is not defined, the sending
   #   of the password will be skipped. Default is nil (undefined).
   pass: %{
     prompt: "assword:", # (string | regex)
@@ -57,8 +58,9 @@ The configuration is a map with this format:
     password: <string>
   },
 
-  # This define the default prompt for the complete interaction after the login process. If the
-  #   command has not defined its own prompt, this common prompt will be used. Default is "#".
+  # This parameter define the default prompt for the complete interaction after the login process. 
+  #   If the command has not defined its own prompt, this common prompt will be used. 
+  #   Default is "#".
   common: %{
     prompt: "#", # (string | regex)
   },
@@ -68,7 +70,7 @@ The configuration is a map with this format:
   #   pager ask for a key press; the `key` parameter will allow simulate the key press for continue.
   continue: %{
     prompt: ~r/(Press|More)/, # (string | regex),
-    key: " "
+    key: " " # spacebar
   },
 
   # The Pish parser need split the data received in lines. With this parameter you can define the
@@ -92,16 +94,16 @@ The `commands` parameter can be just a %Command{} struct or a list of %Command{}
   delay: <integer>
 
   # It is possible that you need wait for a specific string/regex before send the command. If you set
-  #    `prompt` Pish wait for it and then will send the command. If `prompt` is nil or not defined
+  #    `prompt`, Pish wait for it and then will send the command. If `prompt` is nil or not defined
   #    Pish does not wait and directly will send the command.
   prompt: <string | regex>,
 
-  # If you set `until_prompt` Pish will wait for the string|regex after send the command to complete
+  # If you set `until_prompt`, Pish will wait for the string|regex after send the command to complete
   #    the data collect. If is nil or not defined, Pish will wait for `config.common.prompt`
   until_prompt: <string | regex>,
 
   # If you need send a command and are not worry about the response, you can set `nowait_prompt`
-  #    in `true` for Pish send the command with no caputure datas and pass to the next command.
+  #    in `true` for Pish send the command with no capture datas and pass to the next command.
   nowait_prompt: <boolean>,
 
   # If set `true`, regardless of whether there is one match or several, Pish will return a list.
@@ -114,18 +116,18 @@ The `commands` parameter can be just a %Command{} struct or a list of %Command{}
   #    For details about pieces extraction se `Anex A` below.
   #    If this parameters is not defined, the command is sent and do not wait for any specific
   #    prompt, just continue with the next command.
-  match_regex: <string | regex>,
+  match_regex: <regex>,
 
-  # If this parameter is defined as `true`, if the output of the command do not match `match_regex`
+  # If this parameter is defined as `true` and the output of the command do not match `match_regex`
   #    the sequence is aborted and Pish return the data obtained until that moment. If it is `false`,
   #    Pish will continue even when the response does not match with `match_regex`.
   nomatch_abort: <boolean>,
 
-  # Allows values extracted with :match_regex from the response to be stored as key/value pairs
-  #    instead of sequential numeric indexes. If not defined Pish will use [0, 1, ..., n].
+  # Allows values extracted with `match_regex` from the response to be stored as key/value pairs
+  #    instead of sequential numeric indexes. If not defined Pish will use ["0", "1", ..., "n"].
   map: [ key1, key2, ..., keyn ],
 
-  # Allows the result of this command to be stored in the `results` map in a key set it by `id` instead
+  # Allows the result of this command to be stored in a key determined by `id` instead
   #    of the numerical index that would correspond to it based on the numerical index of the command
   #    within the commands list.
   id: <any>
@@ -145,7 +147,7 @@ The `commands` parameter can be just a %Command{} struct or a list of %Command{}
   # You now know that if `error_regexp` has a match and `config.close_onerror` is `true` the sequence
   #   is aborted and Pish return the data obtained until that moment. But if you need create an
   #   exception to this behavior for one command, you can set `error_abort` in false.
-  #   In the same sense by inversed, you can set the default behavior like permisive
+  #   In the same sense but inversed, you can set the default behavior like permisive
   #   (config.close_onerror set in `false`) and create an exception to this behavior setting
   #   `error_abort` as `true`. By default this parameter is `true`.
   error_abort: <boolean>
@@ -154,6 +156,7 @@ The `commands` parameter can be just a %Command{} struct or a list of %Command{}
   #   You can do substitutions in the command using macros of the form {a.b.c}; this reference
   #   will be replaced by results[a][b][c]. For more details you can see an example below in the
   #   `Anex B`.
+  cmd: <string>
 }
 
 ```
