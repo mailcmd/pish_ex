@@ -48,7 +48,7 @@ The configuration is a map with this format:
 
   # Usually this parameter is complementary to `user` and `pass` parameters. Some devices has
   # an admin mode that you can access with a special command (in cisco routers it is usually
-  #nable`). With the `superuser` parameter Pish can wait for a specific prompt and send a
+  # `enable`). With the `superuser` parameter Pish can wait for a specific prompt and send a
   # command. Optionally Pish can wait for another prompt (`pass_prompt`) and send a password
   # if it is needed. Default is nil (undefined).
   superuser: %{
@@ -94,7 +94,7 @@ The `commands` parameter can be just a %Command{} struct or a list of %Command{}
   delay: <integer>
 
   # It is possible that you need wait for a specific string/regex before send the command. If you set
-  #rompt`, Pish wait for it and then will send the command. If `prompt` is nil or not defined
+  # `prompt`, Pish wait for it and then will send the command. If `prompt` is nil or not defined
   # Pish does not wait and directly will send the command.
   prompt: <string | regex>,
 
@@ -141,21 +141,21 @@ The `commands` parameter can be just a %Command{} struct or a list of %Command{}
 
   # This regex allows to determine whether the return of the command is an error or not. The entire
   # matching string will be returned in `results[index or :id][“error_message”]`, and
-  #esults[index or :id][“error”]` will contain the value -1.
+  # results[index or :id][“error”]` will contain the value -1.
   error_regex: <regex>
 
   # You now know that if `error_regexp` has a match and `config.close_onerror` is `true` the sequence
   # is aborted and Pish return the data obtained until that moment. But if you need create an
   # exception to this behavior for one command, you can set `error_abort` in false.
   # In the same sense but inversed, you can set the default behavior like permisive
-  #onfig.close_onerror set in `false`) and create an exception to this behavior setting
-  #rror_abort` as `true`. By default this parameter is `true`.
+  # (config.close_onerror set in `false`) and create an exception to this behavior setting
+  # `error_abort` as `true`. By default this parameter is `true`.
   error_abort: <boolean>
 
   # This is a string with the command to send.
   # You can do substitutions in the command using macros of the form {a.b.c}; this reference
   # will be replaced by results[a][b][c]. For more details you can see an example below in the
-  #nex B`.
+  # `Anex B`.
   cmd: <string>
 }
 
