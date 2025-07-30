@@ -421,7 +421,7 @@ defmodule Pish do
   """
   @spec open(shell_command :: String.t(), config :: map())
     :: {:ok, conn :: connection()} | {:error, msg :: String.t()}
-  def open(shell_command, config \\ @default_config) do
+  def open(shell_command, config \\ %{}) do
     config = Map.merge(@default_config, config)
 
     # I need to save "config.echo_input" because "config" is not available when this value is required
@@ -553,8 +553,8 @@ defmodule Pish do
     end
   end
 
-  def send_command(conn, commands, accum) when is_list(commands), do: run(conn, commands, accum)
-  def send_command({process, %{timeout: global_timeout, common: %{prompt: global_prompt}} = config} = conn, %Command{
+  defp send_command(conn, commands, accum) when is_list(commands), do: run(conn, commands, accum)
+  defp send_command({process, %{timeout: global_timeout, common: %{prompt: global_prompt}} = config} = conn, %Command{
       cmd: cmd,
       prompt: prompt,
       until_prompt: until_prompt,
@@ -727,7 +727,7 @@ defmodule Pish do
     end
   end
 
-  def apply_replaces(cmd, %{} = accum) do
+  defp apply_replaces(cmd, %{} = accum) do
     # first, non wildcard replaces
     cmd = apply_replaces_simple(cmd, Regex.scan(~r/\{([^\*]+?)\}/, cmd), accum)
     # second, wildcard replaces
@@ -765,10 +765,10 @@ defmodule Pish do
     )
   end
 
-  def send_input(process, inputs) when is_list(inputs) do
+  defp send_input(process, inputs) when is_list(inputs) do
     inputs |> Enum.each(fn input -> send_input(process, input) end)
   end
-  def send_input(process, input, newline \\ true) do
+  defp send_input(process, input, newline \\ true) do
     inp = input <> (newline && "\n" || "")
     if Process.get(:echo_input, false), do: IO.write(inp)
     Proc.send_input(process, inp)
@@ -787,7 +787,7 @@ defmodule Pish do
     end
   end
 
-  def flush() do
+  defp flush() do
     receive do
       {:data, _data} ->
         # IO.write(data)
